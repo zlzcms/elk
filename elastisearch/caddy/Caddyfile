@@ -1,0 +1,17 @@
+{
+  email admin@example.com
+}
+
+{$CADDY_DOMAIN} {
+  encode gzip
+  log {
+    output file /data/access.log
+    format json
+  }
+  reverse_proxy kibana:5601 {
+    header_up Host {host}
+    header_up X-Real-IP {remote}
+    header_up X-Forwarded-For {remote}
+    header_up X-Forwarded-Proto {scheme}
+  }
+}

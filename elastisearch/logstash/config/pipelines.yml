@@ -1,0 +1,31 @@
+# @Author: zhujinlong
+# @Date:   2025-11-15 16:35:29
+# @Last Modified by:   zhujinlong
+# @Last Modified time: 2025-11-15 16:36:52
+
+# pipelines.yml 可以配置多个 pipeline，每个 pipeline 独立运行
+# 方式1: 单个配置文件
+- pipeline.id: main
+  path.config: "/usr/share/logstash/pipeline/logstash.conf"
+
+# 方式2: 多个配置文件（会按顺序执行）
+# - pipeline.id: kafka-to-es
+#   path.config: "/usr/share/logstash/pipeline/kafka-to-es.conf"
+#
+# - pipeline.id: file-input
+#   path.config: "/usr/share/logstash/pipeline/file-input.conf"
+
+# 方式3: 使用通配符匹配多个配置文件
+# - pipeline.id: all-pipelines
+#   path.config: "/usr/share/logstash/pipeline/*.conf"
+
+# 方式4: 指定目录（该目录下所有 .conf 文件）
+# - pipeline.id: directory-pipelines
+#   path.config: "/usr/share/logstash/pipeline/"
+
+# 每个 pipeline 还可以配置独立的队列和工作线程
+# - pipeline.id: high-throughput
+#   path.config: "/usr/share/logstash/pipeline/high-throughput.conf"
+#   pipeline.workers: 4
+#   pipeline.batch.size: 500
+

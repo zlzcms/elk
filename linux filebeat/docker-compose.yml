@@ -1,0 +1,19 @@
+# @Author: zhujinlong
+# @Date:   2025-11-19 21:03:40
+# @Last Modified by:   zhujinlong
+# @Last Modified time: 2025-11-19 21:21:59
+services:
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.14.2
+    container_name: filebeat
+    user: root
+    restart: unless-stopped
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./data:/usr/share/filebeat/data
+      - ./docker/containers:/var/lib/docker/containers:ro
+      - ./log:/hostfs/var/log:ro
+      - ./:/hostfs:ro
+
+
+

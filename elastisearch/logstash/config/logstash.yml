@@ -1,0 +1,13 @@
+# @Author: zhujinlong
+# @Date:   2025-11-15 15:59:19
+# @Last Modified by:   zhujinlong
+# @Last Modified time: 2025-11-15 16:35:29
+# Logstash 配置文件
+# 如果需要启用 Elasticsearch 监控，请取消注释并设置相应的环境变量
+# xpack.monitoring.elasticsearch.hosts: [ "https://${ES_HOST}:${ES_PORT}" ]
+# xpack.monitoring.elasticsearch.username: "${ES_USERNAME}"
+# xpack.monitoring.elasticsearch.password: "${ES_PASSWORD}"
+# xpack.monitoring.elasticsearch.ssl.enabled: true
+# xpack.monitoring.elasticsearch.ssl.verification_mode: none
+
+

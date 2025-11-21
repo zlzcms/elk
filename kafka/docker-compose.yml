@@ -1,0 +1,50 @@
+# @Author: zhujinlong
+# @Date:   2025-11-15
+# Kafka and Logstash Docker Compose Configuration
+services:
+  kafka:
+    image: bitnami/kafka:4.0.0
+    container_name: kafka-broker
+    user: root
+    network_mode: "host"
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@${KAFKA_CONTROLLER_HOST:-172.16.2.1}:9093
+      - KAFKA_KRAFT_CLUSTER_ID=${KAFKA_KRAFT_CLUSTER_ID:-zhcdefghijklmnopqrstuv}
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_PUBLIC_HOST:-172.16.2.1}:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:SASL_PLAINTEXT,CONTROLLER:SASL_PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_CLIENT_USERS=${KAFKA_USERNAME:-Maxtech}
+      - KAFKA_CLIENT_PASSWORDS=${KAFKA_PASSWORD:-Maxtechking520}
+      - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
+      - KAFKA_CONTROLLER_USER=${KAFKA_USERNAME:-Maxtech}
+      - KAFKA_CONTROLLER_PASSWORD=${KAFKA_PASSWORD:-Maxtechking520}
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+      - KAFKA_INTER_BROKER_USER=${KAFKA_USERNAME:-Maxtech}
+      - KAFKA_INTER_BROKER_PASSWORD=${KAFKA_PASSWORD:-Maxtechking520}
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN
+      - KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=${KAFKA_AUTO_CREATE_TOPICS_ENABLE:-true}
+      - KAFKA_HEAP_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - ${KAFKA_DATA_PATH:-/www/wwwroot/kafka/server/data}:/bitnami/kafka
+   
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "${KAFKA_UI_PORT:-8080}:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: secure
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: ${KAFKA_PUBLIC_HOST:-172.16.2.1}:9092
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
+      KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: |
+        org.apache.kafka.common.security.plain.PlainLoginModule required
+        username="${KAFKA_USERNAME:-Maxtech}" password="${KAFKA_PASSWORD:-Maxtechking520}";
