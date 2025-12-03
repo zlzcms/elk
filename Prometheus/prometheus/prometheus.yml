@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter监控
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Grafana监控
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+
+  # 可以添加更多监控目标
+  # - job_name: 'your-app'
+  #   static_configs:
+  #     - targets: ['your-app:port']

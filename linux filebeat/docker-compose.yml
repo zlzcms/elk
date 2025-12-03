@@ -13,7 +13,8 @@ services:
       - ./data:/usr/share/filebeat/data
       - ./docker/containers:/var/lib/docker/containers:ro
       - ./log:/hostfs/var/log:ro
-      - ./:/hostfs:ro
+      # 挂载日志目录，使容器内可以访问主机的日志文件
+      - /www/wwwroot:/www/wwwroot:ro
 
 
 

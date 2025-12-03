@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  logstash-config-ui:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    container_name: logstash-config-ui
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-change-me}
+      - LOGSTASH_PIPELINE_PATH=/app/pipeline/logstash.conf
+      - LOGSTASH_BACKUP_DIR=/app/pipeline/backups
+      - LOGSTASH_LOG_PATH=/app/logs/logstash-plain.log
+      - LOGSTASH_LOG_MAX_BYTES=${LOGSTASH_LOG_MAX_BYTES:-200000}
+      - LOGSTASH_RESTART_CMD=${LOGSTASH_RESTART_CMD:-""}
+      - LOGSTASH_TEST_CMD=${LOGSTASH_TEST_CMD:-""}
+    volumes:
+      - ./pipeline:/app/pipeline
+      - ./logs:/app/logs:ro
+    restart: unless-stopped
+

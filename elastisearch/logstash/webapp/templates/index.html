@@ -1,0 +1,217 @@
+<!-- 
+  @Author: zhujinlong
+  @Date:   2025-11-27 20:59:34
+  @Last Modified by:   zhujinlong
+  @Last Modified time: 2025-11-28 01:34:47
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logstash 配置管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        padding: 2rem 0;
+      }
+      .container {
+        max-width: 1200px;
+      }
+      .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: none;
+      }
+      .card-header {
+        background-color: #fff;
+        border-bottom: 2px solid #e9ecef;
+        font-weight: 600;
+      }
+      textarea {
+        font-family: "SFMono-Regular", Consolas, Monaco, monospace;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      #log-output {
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        font-family: "SFMono-Regular", Consolas, Monaco, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        max-height: 600px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .nav-tabs .nav-link {
+        color: #495057;
+        border: none;
+        border-bottom: 2px solid transparent;
+      }
+      .nav-tabs .nav-link:hover {
+        border-color: #dee2e6;
+      }
+      .nav-tabs .nav-link.active {
+        color: #0d6efd;
+        background-color: transparent;
+        border-color: #0d6efd;
+        font-weight: 600;
+      }
+      .meta-info {
+        font-size: 0.875rem;
+        color: #6c757d;
+      }
+      .log-path {
+        font-size: 0.75rem;
+        color: #6c757d;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">
+          <i class="bi bi-gear-fill me-2"></i>Logstash 配置管理
+        </h1>
+      </div>
+
+      {% if message %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>{{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      {% if error %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="config-tab" data-bs-toggle="tab" data-bs-target="#config-pane" type="button" role="tab" aria-controls="config-pane" aria-selected="true">
+                <i class="bi bi-file-code me-2"></i>配置编辑
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs-pane" type="button" role="tab" aria-controls="logs-pane" aria-selected="false">
+                <i class="bi bi-journal-text me-2"></i>日志查看
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div class="tab-content">
+            <!-- 配置编辑面板 -->
+            <div class="tab-pane fade show active" id="config-pane" role="tabpanel" aria-labelledby="config-tab">
+              <div class="meta-info mb-3">
+                <div><strong>当前文件：</strong><code>{{ pipeline_path }}</code></div>
+                {% if last_modified %}
+                <div class="mt-1"><strong>最近更新时间：</strong>{{ last_modified | datetimeformat }}</div>
+                {% else %}
+                <div class="mt-1 text-warning">文件不存在，将在保存时创建。</div>
+                {% endif %}
+              </div>
+
+              {% if validation %}
+              <div class="alert alert-info mb-3">
+                <h6 class="alert-heading">配置校验</h6>
+                <div class="mb-1"><strong>状态：</strong><span class="badge bg-{{ 'success' if validation.status == 'ok' else 'danger' }}">{{ validation.status }}</span></div>
+                <pre class="mb-0" style="background-color: #f8f9fa; padding: 12px; border-radius: 4px; font-size: 12px;">{{ validation.output }}</pre>
+              </div>
+              {% endif %}
+
+              {% if restart %}
+              <div class="alert alert-{{ 'success' if restart.status == 'ok' else 'warning' }} mb-3">
+                <h6 class="alert-heading">Logstash 重启</h6>
+                <div class="mb-1"><strong>状态：</strong><span class="badge bg-{{ 'success' if restart.status == 'ok' else 'danger' }}">{{ restart.status }}</span></div>
+                <pre class="mb-0" style="background-color: rgba(0,0,0,0.05); padding: 12px; border-radius: 4px; font-size: 12px;">{{ restart.output }}</pre>
+              </div>
+              {% endif %}
+
+              <form method="post">
+                <div class="mb-3">
+                  <textarea name="config" class="form-control" rows="20" spellcheck="false" placeholder="请输入 Logstash 配置...">{{ content }}</textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-2"></i>保存并重启
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 日志查看面板 -->
+            <div class="tab-pane fade" id="logs-pane" role="tabpanel" aria-labelledby="logs-tab">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h6 class="mb-1">Logstash 日志</h6>
+                  <div class="log-path">{{ log_path }}</div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshLogs()">
+                  <i class="bi bi-arrow-clockwise me-1"></i>刷新
+                </button>
+              </div>
+              <div id="log-output" class="border rounded p-3">正在加载日志...</div>
+              <div class="mt-2 text-muted small">
+                <i class="bi bi-info-circle me-1"></i>日志每 5 秒自动刷新
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      async function refreshLogs() {
+        const logOutput = document.getElementById("log-output");
+        try {
+          const res = await fetch("/logs");
+          const text = await res.text();
+          if (text.trim()) {
+            logOutput.textContent = text;
+            // 自动滚动到底部
+            logOutput.scrollTop = logOutput.scrollHeight;
+          } else {
+            logOutput.textContent = "日志文件为空或尚未生成日志。\n\n提示：\n1. 请确认 Logstash 服务正在运行\n2. 检查日志路径是否正确：" + "{{ log_path }}" + "\n3. 如果 Logstash 刚启动，可能需要等待一段时间才会生成日志";
+          }
+        } catch (err) {
+          logOutput.textContent = "读取日志失败：" + err.message + "\n\n请检查：\n1. 日志文件路径是否正确\n2. 文件权限是否足够\n3. 服务是否正常运行";
+        }
+      }
+
+      // 页面加载时刷新日志
+      refreshLogs();
+      
+      // 每 5 秒自动刷新日志（仅在日志标签页激活时）
+      let logRefreshInterval;
+      const logsTab = document.getElementById("logs-tab");
+      const logsPane = document.getElementById("logs-pane");
+      
+      logsTab.addEventListener("shown.bs.tab", function() {
+        refreshLogs();
+        logRefreshInterval = setInterval(refreshLogs, 5000);
+      });
+      
+      logsTab.addEventListener("hidden.bs.tab", function() {
+        if (logRefreshInterval) {
+          clearInterval(logRefreshInterval);
+        }
+      });
+      
+      // 如果默认显示日志标签页，启动自动刷新
+      if (logsPane.classList.contains("active")) {
+        logRefreshInterval = setInterval(refreshLogs, 5000);
+      }
+    </script>
+  </body>
+</html>
+

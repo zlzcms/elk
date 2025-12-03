@@ -166,6 +166,7 @@ services:
       - ./logstash/config:/usr/share/logstash/config
       - ./logstash/pipeline:/usr/share/logstash/pipeline
       - ./data/logstash:/usr/share/logstash/data
+      - ./logstash/logs:/usr/share/logstash/logs
       - ./certs/es:/usr/share/logstash/certs
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -174,6 +175,35 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # Logstash 配置管理 Web UI
+  logstash-config-ui:
+    build:
+      context: ./logstash/webapp
+      dockerfile: Dockerfile
+    container_name: logstash-config-ui
+    depends_on:
+      logstash:
+        condition: service_started
+    networks:
+      - elk_gtc
+    ports:
+      - "${LOGSTASH_UI_PORT:-5000}:5000"
+    environment:
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-change-me}
+      - LOGSTASH_PIPELINE_PATH=/app/pipeline/logstash.conf
+      - LOGSTASH_BACKUP_DIR=/app/pipeline/backups
+      - LOGSTASH_LOG_PATH=/app/logs/logstash-plain.log
+      - LOGSTASH_LOG_MAX_BYTES=${LOGSTASH_LOG_MAX_BYTES:-200000}
+      # 方案1: 使用 Docker 命令（需要挂载 docker.sock）
+      - LOGSTASH_TEST_CMD=docker exec logstash /usr/share/logstash/bin/logstash --config.test_and_exit -f /usr/share/logstash/pipeline/logstash.conf
+      - LOGSTASH_RESTART_CMD=docker restart logstash
+    volumes:
+      - ./logstash/pipeline:/app/pipeline
+      - ./logstash/logs:/app/logs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # 挂载 docker.sock 以执行 docker 命令
+    restart: unless-stopped
+
   
 
   # caddy:
