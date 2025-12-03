@@ -1,0 +1,84 @@
+# @Author: zhujinlong
+# @Date:   2025-12-03 14:52:23
+# @Last Modified by:   zhujinlong
+# @Last Modified time: 2025-12-03 14:52:26
+
+networks:
+  docker_default:
+    #driver: bridge  # 默认创建网络就是这个类型
+    external: true   # 引用外部网络时这条取消注释
+
+services:
+  # alertmanager:
+  #   image: quay.io/prometheus/alertmanager
+  #   # ports:
+  #   #   - 9093:9093
+  #   volumes:
+  #     - ./alertmanager/config:/etc/alertmanager    # 配置文件目录
+  #     - ./alertmanager/data:/data                  # 数据目录
+  #   networks:
+  #     - docker_default
+
+  prometheus:
+    image: prom/prometheus
+    # ports:
+    #   - 9090:9090    
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/config:/etc/prometheus      # 配置文件目录（已存在）
+      - ./prometheus/data:/prometheus            # 新增数据目录挂载
+    networks:
+      - docker_default
+
+  grafana:
+    image: grafana/grafana:11.5.3
+    # ports:
+    #   - 9090:9090  
+    restart: unless-stopped  
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=your_custom_password  # 自定义密码
+    volumes:
+      - ./grafana/data:/var/lib/grafana    # 持久化数据（Dashboards 等）
+    #  - ./grafana/config:/etc/grafana      # 可选：挂载自定义配置文件
+    networks:
+      - docker_default
+
+
+
+
+###  本机 的 主机数据采集点
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+
+  # loki:
+  #   image: grafana/loki
+  #   container_name: loki
+  #   volumes:
+  #     - ./loki/config:/etc/loki  # 配置文件目录      /etc/loki/local-config.yaml
+  #     - ./loki/data:/loki        # 数据目录
+  #   ports:
+  #     - 3100:3100
+  #   networks:
+  #     - docker_default
+
+  # promtmail:
+  #   image: grafana/promtail
+  #   container_name: promtail
+  #   volumes:
+  #     - ./promtail/config:/etc/promtail  # 配置文件目录
+  #     - ../crontask/data/logs:/var/log                # 日志目录
+  #     - /etc/machine-id:/etc/machine-id  # 机器ID文件
+  #   ports:
+  #     - 9080:9080
+  #   networks:
+  #     - docker_default
+  #   command: -config.file=/etc/promtail/promtail-config.yaml
+    

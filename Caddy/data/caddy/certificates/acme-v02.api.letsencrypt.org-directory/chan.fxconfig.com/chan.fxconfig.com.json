@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"chan.fxconfig.com"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/0567a04e01afc7c2d044dbd7a9b5da23a788",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2345881837",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2025-12-16T08:56:08Z",
+				"end": "2025-12-18T04:06:58Z"
+			},
+			"_uniqueIdentifier": "jw0TovYuftFQbDMYOF1ZjiNykco.BWegTgGvx8LQRNvXqbXaI6eI",
+			"_retryAfter": "2025-12-03T12:54:35.647726413Z",
+			"_selectedTime": "2025-12-17T13:58:16Z"
+		}
+	}
+}

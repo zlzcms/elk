@@ -1,0 +1,21 @@
+
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./data:/data
+    networks:
+      - docker_default
+    # Dockerfile 示例
+    #CMD: ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+
+networks:
+  docker_default:
+    #driver: bridge  # 默认创建网络就是这个类型
+    external: true   # 引用外部网络时这条取消注释

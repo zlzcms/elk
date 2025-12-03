@@ -1,0 +1,134 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText0.0.4
+  evaluation_interval: 15s
+runtime:
+  gogc: 75
+# rule_files:
+#   - "rule.yml"
+# alerting:
+#   alertmanagers:
+#   - follow_redirects: true
+#     enable_http2: true
+#     http_headers: null
+#     scheme: http
+#     timeout: 10s
+#     api_version: v2
+#     static_configs:
+#     - targets: [alertmanager:9093]
+scrape_configs:
+# - job_name: prometheus
+#   honor_timestamps: true
+#   track_timestamps_staleness: false
+#   scrape_interval: 15s
+#   scrape_timeout: 10s
+#   scrape_protocols:
+#   - OpenMetricsText1.0.0
+#   - OpenMetricsText0.0.1
+#   - PrometheusText0.0.4
+#   metrics_path: /metrics
+#   scheme: http
+#   enable_compression: true
+#   follow_redirects: true
+#   enable_http2: true
+#   http_headers: null
+#   static_configs:
+#   - targets:
+#     - localhost:9090
+
+- job_name: "Win"
+  static_configs:  
+  - targets: ["172.16.0.200:9182"]
+    labels:
+      instance: "0-GTC-own-WS-quote"       # 自定义主机名
+      environment: "0-GTC-own-WS-quote"  # 自定义功能标签
+
+  - targets: ["172.16.0.204:9182"]
+    labels:
+      instance: "1-HK-T4-AQ"       # 自定义主机名
+      environment: "1-HK-T4-AQ"  # 自定义功能标签     
+      
+  - targets: ["172.16.2.228:9182"]
+    labels:
+      instance: "2-HK-T5A-88-89-Q"       # 自定义主机名
+      environment: "2-HK-T5A-88-89-Q"  # 自定义功能标签
+
+  - targets: ["172.16.0.201:9182"]
+    labels:
+      instance: "3-HK-T5AQ-T4Q"       # 自定义主机名
+      environment: "3-HK-T5AQ-T4Q"  # 自定义功能标签
+
+  - targets: ["47.115.90.123:9182"]
+    labels:
+      instance: "4-SZ-T5AQ-T4Q"       # 自定义主机名
+      environment: "4-SZ-T5AQ-T4Q"  # 自定义功能标签
+
+  - targets: ["172.27.94.48:9182"]
+    labels:
+      instance: "T5-Report"       # 自定义主机名
+      environment: "主T5-Report"  # 自定义功能标签
+
+  - targets: ["172.16.2.244:9182"]
+    labels:
+      instance: "Foll-Agent-All"       # 自定义主机名
+      environment: "Foll-Agent-All"  # 自定义功能标签  
+
+  - targets: ["172.16.2.4:9182"]
+    labels:
+      instance: "T4-new-Rpt-All-max-tech-CA1"       # 自定义主机名
+      environment: "T4-new-Rpt-All-max-tech-CA1"  # 自定义功能标签  
+    
+
+  - targets: ["106.52.119.171:9182"]
+    labels:
+      instance: "跟单测试机"       # 自定义主机名
+      environment: "实盘"  # 自定义功能标签
+
+
+
+
+
+- job_name: "Linux"
+  static_configs:
+  - targets: ["122.51.27.47:9100"]
+    labels:
+      instance: "122测试机"       # 自定义主机名
+      environment: "测试机测试"  # 自定义功能标签
+
+  - targets: ["172.16.2.246:9100"]
+    labels:
+      instance: "Self"       # 自定义主机名
+      environment: "JumpServer自己"  # 自定义功能标签
+
+
+  - targets: ["172.16.2.2:9100"]
+    labels:
+      instance: "TD-Kline-Main"       # 自定义主机名
+      environment: "只放置了 TD "  # 自定义功能标签  
+      
+  - targets: ["172.16.2.231:9100"]
+    labels:
+      instance: "Main-NG"       # 自定义主机名
+      environment: "主 Ng 服务器"  # 自定义功能标签
+
+  - targets: ["172.16.2.15:9100"]
+    labels:
+      instance: "APP-v2-PHP-Online"       # 自定义主机名
+      environment: "APP-v2-PHP-Online"  # 自定义功能标签
+
+  - targets: ["172.16.2.6:9100"]
+    labels:
+      instance: "APP-v2-PHP-dev`"       # 自定义主机名
+      environment: "APP-v2-PHP"  # 自定义功能标签
+
+# - job_name: "Consul"
+#   static_configs:
+#   - targets: ["172.16.2.231:9107"]
+#     labels:
+#       instance: "main-consul"       # 自定义主机名
+
+      

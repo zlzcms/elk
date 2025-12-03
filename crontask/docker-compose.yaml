@@ -1,0 +1,60 @@
+# @Author: zhujinlong
+# @Date:   2025-12-03 15:00:23
+# @Last Modified by:   zhujinlong
+# @Last Modified time: 2025-12-03 15:00:27
+networks:
+  docker_default:
+    #driver: bridge  # 默认创建网络就是这个类型
+    external: true   # 引用外部网络时这条取消注释
+
+services:
+  pylark:
+    image: python:3.12-slim
+    restart: always
+    volumes:
+      - ./py:/app
+    working_dir: /app
+    command: >
+      sh -c "
+        pip install --no-cache-dir -r requirements.txt -i  https://mirrors.aliyun.com/pypi/simple/  &&
+        python main.py
+      "
+    # expose:
+    #   - 8000
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - docker_default
+
+  cronicle:
+    image: soulteary/cronicle
+    restart: always
+    #hostname: cronicle
+    # ports:
+    #   - 8012:3012
+    expose:
+      - 3012
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./data/data:/opt/cronicle/data
+      - ./data/logs:/opt/cronicle/logs
+      - ./data/plugins:/opt/cronicle/plugins
+      - ./data/config.json:/opt/cronicle/conf/config.json
+    # extra_hosts:
+    #   - "cronicle.lab.io:0.0.0.0"
+    # environment:
+    #   - BASE_APP_URL=https://cron.max.tech
+    #   - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider localhost:3012/api/app/ping || exit 1"]
+      interval: 15s
+      timeout: 1s
+      retries: 3
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "10m"
+
+    networks:
+      - docker_default

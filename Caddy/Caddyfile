@@ -1,0 +1,176 @@
+### 维护方法
+# docker exec -it e14c62793ef60a8ae8ef61386 sh 
+# 先验证：  caddy validate --config /etc/caddy/Caddyfile
+# 再重载：  caddy reload --config /etc/caddy/Caddyfile
+
+###  本机可用域名          当前已用作为
+
+#   jump.max.tech          ## JumpServer 管理界面
+#   jmp.max.tech
+#   monitor.max.tech       ## 主 Linux 上的 RestyPanel  监控界面
+#   pmt.max.tech
+#   cron.max.tech
+#   gfn.max.tech
+
+# chan.fxconfig.com      ## 禅道
+# aia.fxconfig.com      ## aib  aic   aid  指向了 AI  47.239.101.153
+
+
+jump.max.tech {
+    reverse_proxy http://172.18.0.1:88
+}
+
+jmp.max.tech {
+    reverse_proxy searchmq-api:8000
+}
+
+cron.max.tech {
+    reverse_proxy cronicle:3012
+}
+
+monitor.max.tech {
+    # reverse_proxy /asd1239axasd/*  http://172.16.2.231:8765 {
+    #     header_up Host {host}
+    #     header_up X-Real-IP {remote}
+    #     header_up X-Forwarded-For {remote}
+    #     header_up X-Forwarded-Proto {scheme}
+    #     uri /{path}
+    # }
+    # reverse_proxy http://172.16.2.231:8500
+   reverse_proxy http://172.16.2.231:8765
+}
+
+
+pmt.max.tech {
+    reverse_proxy prometheus:9090 
+
+    encode zstd gzip
+}
+
+gfn.max.tech {
+    reverse_proxy grafana:3000
+
+    encode zstd gzip
+}
+
+chan.fxconfig.com {
+    reverse_proxy zentao:80
+}
+
+#   pmt.max.tech
+
+### 8.222.250.205 上的可用域名          当前已用作为
+
+# crmdemo.eaykd.com 
+# crmtest.eaykd.com 
+# crmt.eaykd.com 
+# gemini.eaykd.com 
+# openai.eaykd.com 
+# proxy.eaykd.com 
+# pxy.eaykd.com 
+
+#doc.mtarde.com      # Admin 手册
+
+# docs.max.tech
+# config.max.tech
+# lic.max.tech
+# llm.max.tech
+# pxy.max.tech
+# online.max.tech
+# setting.max.tech
+
+# lic.max.tech  gemini.eaykd.com  {
+#     # reverse_proxy http://47.113.218.100:8081
+#     #reverse_proxy frps:6699
+#     # reverse_proxy amis-admin:6699
+#     # reverse_proxy tts.eaykd.com
+#     reverse_proxy http://218.95.39.207:6699
+# }
+
+# # frps 管理界面
+# proxy.eaykd.com {
+#     reverse_proxy http://frps:7500
+# }
+
+
+# pxy.eaykd.com {
+#     reverse_proxy http://cronicle:3012
+# }
+
+# # 管理端手册
+# doc.mtarde.com  {
+#     reverse_proxy frps:8010
+# }
+
+# # 用户端手册
+# online.max.tech {
+#     reverse_proxy frps:8100
+# }
+
+
+# worktool 回调地址，flask 提供 service
+# abc.dglqh.com  {
+#     reverse_proxy /threadQa wxwork:8080
+#     reverse_proxy /debug 172.19.0.1:8081
+# }
+
+
+# # Sina 报价中转，反向代理  这种设置，和下面的设置都可以，
+# 当前，根据协议，将 websocket  Upgrade 反向代理到 sinajs ，  而下面的，是根据  路由
+# bbb.dglqh.com  {
+# 	@websockets {
+# 		header Connection *Upgrade*
+# 		header Upgrade    websocket
+# 	}
+# 	reverse_proxy @websockets https://w.sinajs.cn  {  # wss 中转也只能填 https 接口
+#       header_up  Host w.sinajs.cn
+#       header_up  Origin https://gu.sina.cn
+#     }
+# 	reverse_proxy quote-sina:8080
+# }
+
+# # Sina 报价中转，反向代理  
+# bbb.dglqh.com  {   
+#   route  /wskt  {
+#     reverse_proxy https://w.sinajs.cn  {  # wss 中转也只能填 https 接口
+#       header_up  Host w.sinajs.cn
+#       header_up  Origin https://gu.sina.cn
+#     }
+#   }
+
+#   route  /get_quote  {                    # 对外提供 GET api 接口
+#     reverse_proxy http://quote-sina:8080
+#   }
+# }
+
+
+
+# abc.dglqh.com  {
+#   route /console/api  {
+#     reverse_proxy http://api:5001
+#   }
+#   route /api {
+#     reverse_proxy http://api:5001
+#   }
+# }
+
+# mpquant.dglqh.cn {  
+#   route /api/* {
+#     reverse_proxy http://backend:8000
+#   }
+
+#   route /* {
+#     root * /www/MaxproTrade/admin_front
+#     try_files {path} /index.html    #单文件服务，vue项目
+#     file_server
+#   }
+# }
+
+
+
+
+
+
+
+
+

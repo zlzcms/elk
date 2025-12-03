@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"jmp.max.tech"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/06c02ac6328456d8016664421e6182164885",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2345881837",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2026-01-26T05:20:15Z",
+				"end": "2026-01-28T00:31:04Z"
+			},
+			"_uniqueIdentifier": "jw0TovYuftFQbDMYOF1ZjiNykco.BsAqxjKEVtgBZmRCHmGCFkiF",
+			"_retryAfter": "2025-12-03T12:54:35.838512434Z",
+			"_selectedTime": "2026-01-27T14:26:16Z"
+		}
+	}
+}

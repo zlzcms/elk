@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"gfn.max.tech"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/068f28f352bc64ed5c5069626fe2973d6da2",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2345881837",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2025-12-15T12:28:33Z",
+				"end": "2025-12-17T07:39:22Z"
+			},
+			"_uniqueIdentifier": "jw0TovYuftFQbDMYOF1ZjiNykco.Bo8o81K8ZO1cUGlib-KXPW2i",
+			"_retryAfter": "2025-12-03T10:54:35.694569855Z",
+			"_selectedTime": "2025-12-15T17:55:26Z"
+		}
+	}
+}
